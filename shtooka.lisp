@@ -51,8 +51,8 @@
     (string
        (ensure-valid-shtooka-packet-name packet-names)
        (mapcar
-        #L(cons (cdr (assoc :swac-text (second %)))
-                (concatenate 'string packet-names "/" (first %)))
+        (lambda (el) (cons (cdr (assoc :swac-text (second el)))
+                           (concatenate 'string packet-names "/" (first el))))
         (parse-shtooka-tags
          (cached-http-request
           (format nil "http://packs.shtooka.net/~a/ogg/index.tags.txt" packet-names)))))))
