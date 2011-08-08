@@ -1,0 +1,7 @@
+понедельник  | monday
+вторник      | tuesday
+среда        | wednesday
+четверг      | thursday
+пятница      | friday
+суббота      | saturday
+воскресенье  | sunday

@@ -1,0 +1,14 @@
+(defsystem :language
+  :serial t
+  :components ((:static-file "language.asd")
+               (:file "packages")
+               (:file "utilities")
+               (:file "cached-http-request")
+               (:file "iso-639")
+               (:file "shtooka")
+               (:file "frequency")
+               (:file "vocab"))
+  :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora))
+
+
+
