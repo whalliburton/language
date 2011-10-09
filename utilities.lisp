@@ -9,7 +9,7 @@
     (or (not mismatch) (= mismatch (length prefix)))))
 
 (defun random-nth (list)
-  (nth (random (length list)) list))
+  (elt list (random (length list))))
 
 (defun choose-file (directory)
   (let ((indexed

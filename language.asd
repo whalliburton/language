@@ -7,7 +7,8 @@
                (:file "iso-639")
                (:file "shtooka")
                (:file "frequency")
-               (:file "vocab"))
+               (:file "vocab")
+               (:file "keyboard"))
   :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora))
 
 
