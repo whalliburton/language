@@ -2,6 +2,7 @@
   :serial t
   :components ((:static-file "language.asd")
                (:file "packages")
+               (:file "emacs")
                (:file "utilities")
                (:file "cached-http-request")
                (:file "iso-639")
