@@ -7,13 +7,8 @@
 
 (defvar *vocab* nil)
 
-
-(defun print-vocab (&optional (vocab *vocab*))
-  (iter (for (native . translated) in vocab)
-    (format t "~20A ~A~%" native translated)))
-
 (defun load-vocab (&optional (directory *vocab-directory*))
-  (let ((filename (choose-file directory)))
+  (let ((filename (choose-file directory (lambda (el) (substitute #\space #\- el)))))
     (setf *vocab*
           (with-input-from-file (stream filename)
             (iter (for line = (read-line stream nil))
@@ -21,7 +16,12 @@
               (destructuring-bind (native translation) (split-sequence #\| line)
                 (collect (cons (string-trim '(#\space) native)
                                (string-trim '(#\space) translation)))))))
+    (load-vocab-audio)
     (print-vocab)))
+
+(defun print-vocab (&optional (vocab *vocab-audio*))
+  (iter (for (native translated . audio) in vocab)
+    (format t "~20A ~A~%" native translated)))
 
 (defvar *vocab-audio* nil)
 
@@ -47,12 +47,14 @@
     (format t "~A~%" native)
     (mapcar #'play audio)))
 
-(defun quiz-vocab (&key (vocab-audio *vocab-audio*))
+(defun quiz-vocab (&key (vocab-audio *vocab-audio*) (shuffle t))
   (let (working removed)
     (iter
       (when (null working)
-        (setf working (set-difference (shuffle vocab-audio) removed))
-        (format t "** reshuffling~%"))
+        (setf working (set-difference (if shuffle
+                                        (shuffle (copy-list vocab-audio))
+                                        vocab-audio) removed))
+        (format t "** reshuffling~%~%"))
       (let ((current (pop working)))
         (destructuring-bind (native translation . audio) current
           (format t "~A" translation)
