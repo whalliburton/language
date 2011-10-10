@@ -14,11 +14,10 @@
                                 (coerce (nth line *russian-characters*) 'list))))
      (for char = (pop remaining))
      (format t "~A~%" char)
-     (let* ((line (read-line))
-            (in (aref line 0)))
+     (let ((in (read-char-from-emacs)))
        (if (char= in #\q)
          (return)
          (unless (char= in char)
-           (format t "WRONG!~%")))))))
+           (format t "WRONG! (~A)~%" in)))))))
 
 
