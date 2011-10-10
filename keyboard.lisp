@@ -1,7 +1,5 @@
 (in-package :language)
 
-(prologue keyboard)
-
 (defparameter *russian-characters*
   '("фывапролджэ"
     "йцукенгшщзхъ"
