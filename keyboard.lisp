@@ -5,10 +5,12 @@
     "йцукенгшщзхъ"
     "ячсмитьбю"))
 
-(defun quiz-keys (&key (line 0) (shuffle #'shuffle))
+(defun quiz-keys (&key (line '(0 1 2)) (shuffle #'shuffle))
+  "Simple quiz of the Russian keyboard."
+  (format t "Press 'q' to exit.~%")
   (let ((line
           (etypecase line
-            (number line)
+            (number (nth line *russian-characters*))
             (cons (with-output-to-string (stream)
                     (iter (for index in line)
                           (write-string (nth index *russian-characters*) stream)))))))
