@@ -9,8 +9,9 @@
                (:file "shtooka")
                (:file "frequency")
                (:file "vocab")
-               (:file "keyboard"))
-  :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora))
+               (:file "keyboard")
+               (:file "help"))
+  :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora :cl-fad))
 
 
 
