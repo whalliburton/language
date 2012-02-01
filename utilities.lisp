@@ -20,3 +20,10 @@
               (format t "~3A ~A~%" index (funcall name-processor (pathname-name filename)))
               (collect (cons index filename))))))
     (cdr (assoc (parse-integer (read-line)) indexed :test #'=))))
+
+(defun slurp-file (filename)
+  "Load then entire file of FILENAME into a string."
+  (with-open-file (stream filename :direction :input :if-does-not-exist :error)
+    (let ((seq (make-string (file-length stream))))
+      (read-sequence seq stream)
+      seq)))

@@ -10,8 +10,6 @@
                (:file "frequency")
                (:file "vocab")
                (:file "keyboard")
-               (:file "help"))
+               (:file "help")
+               (:file "translate"))
   :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora :cl-fad))
-
-
-
