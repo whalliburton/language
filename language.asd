@@ -11,5 +11,7 @@
                (:file "vocab")
                (:file "keyboard")
                (:file "help")
-               (:file "translate"))
-  :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora :cl-fad))
+               (:file "translate")
+               (:file "festival"))
+  :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora :cl-fad
+                       :flexi-streams))
