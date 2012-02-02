@@ -25,3 +25,20 @@
            (return)
            (unless (char= in char)
              (format t "WRONG! (~A)~%" in))))))))
+
+(defun quiz-typing (&optional maximum-word-length)
+  "Simple quiz of typing Russian words."
+  (format t "Type 'q' to exit.~%")
+  (let* ((words
+           (iter (for (name type) in (load-word-frequency-list))
+                 (if (or (null maximum-word-length)
+                         (<= (length name) maximum-word-length))
+                  (collect name))))
+         (length (length words)))
+    (iter
+     (let ((word (nth (random length) words)))
+       (format t "~A~&" word)
+       (let ((input (read-line)))
+         (when (equal input "q") (return))
+         (when (not (equal input word))
+           (format t "WRONG!~%")))))))

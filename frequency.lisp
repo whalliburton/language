@@ -5,10 +5,15 @@
 (defun frequency-list-path ()
   (concatenate 'string (base-path) "russian/5000-frequency.txt"))
 
-(defun load-word-frequency-list ()
-  (iter (for line in-file (frequency-list-path)
-             using #'read-line)
-        (collect (cddr (split-sequence #\space (string-trim '(#\return) line))))))
+(defparameter *word-frequency-list* nil)
+
+(defun load-word-frequency-list (&optional reload)
+  (if (or reload (null *word-frequency-list*))
+    (setf *word-frequency-list*
+          (iter (for line in-file (frequency-list-path)
+                     using #'read-line)
+                (collect (cddr (split-sequence #\space (string-trim '(#\return) line))))))
+    *word-frequency-list*))
 
 (defun find-word-in-wordlist (word wordlist)
   (iter (for el in wordlist)

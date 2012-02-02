@@ -7,5 +7,5 @@
   (:import-from json decode-json-from-string)
   (:import-from sb-ext run-program process-status octets-to-string string-to-octets)
   (:import-from flexi-streams with-output-to-sequence)
-  (:export quiz-keys translate))
+  (:export quiz-keys quiz-typing translate))
 
