@@ -12,6 +12,7 @@
                (:file "keyboard")
                (:file "help")
                (:file "translate")
-               (:file "festival"))
+               (:file "festival")
+               (:file "dictionary"))
   :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora :cl-fad
-                       :flexi-streams))
+                       :flexi-streams :org-davep-dict))
