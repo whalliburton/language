@@ -78,6 +78,12 @@
    (find (concatenate 'string packet-name "/" filename)
          (list-shtooka-packet-words packet-name) :key 'cdr :test 'string=)))
 
+(defun shtooka-word-from-full-name (full-name)
+  (let ((split (or (position #\/ full-name)
+                   (error "Invalid shtooka full name."))))
+    (shtooka-packet-word (subseq full-name 0 split)
+                         (subseq full-name (1+ split)))))
+
 (defun shtooka-packet-word (packet-name filename)
   (ensure-valid-shtooka-packet-name packet-name)
   (let ((url (format nil "http://packs.shtooka.net/~a/ogg/~a" packet-name filename)))
@@ -89,3 +95,4 @@
 (defmethod play ((word shtooka-word))
   (run-program "ogg123" (list (cache-filename-from-url (shtooka-word-url word)))
                :wait t :search t))
+

@@ -17,17 +17,33 @@
 
 (defun find-word-in-wordlist (word wordlist)
   (iter (for el in wordlist)
-        (when (or (string-equal word (car el))
-;;                  (string-starts-with (car el) word)
-                  )
+        (when (string-equal word (car el))
           (collect el))))
 
-(defun match-frequency-to-wordlist ()
-  (let ((wordlist (list-shtooka-packet-words
-                   '("rus-balm-voc" "rus-balm-voc-sakhno" "rus-nonfree"))))
-    (iter (for word in (load-word-frequency-list))
-          (collect (append word (find-word-in-wordlist (car word) wordlist))))))
+(defparameter *frequency-wordlist-audio-mapping* nil)
 
-(defun print-frequency-wordlist-matches ()
-  (iter (for el in (match-frequency-to-wordlist))
+(defun frequency-wordlist-audio-mapping (&optional reload)
+  (if (or reload (null *frequency-wordlist-audio-mapping*))
+    (setf *frequency-wordlist-audio-mapping*
+          (let ((wordlist (list-shtooka-packet-words
+                           '("rus-balm-voc" "rus-balm-voc-sakhno" "rus-nonfree")))
+                (mapping (make-hash-table :test 'equal)))
+            (iter (for word in (load-word-frequency-list))
+                  (push (append (cdr word) (find-word-in-wordlist (car word) wordlist))
+                        (gethash (car word) mapping)))
+            mapping))
+    *frequency-wordlist-audio-mapping*))
+
+(defun print-frequency-wordlist-audio-mapping ()
+  (iter (for el in (frequency-wordlist-audio-mapping))
     (format t "~A ~20T ~7A~{ ~A~}~%" (first el) (second el) (mapcar #'car (cddr el)))))
+
+(defun list-frequency-words (&optional maximum-word-length)
+  (iter
+   (with count = 0)
+   (for (name type) in (load-word-frequency-list))
+        (when (or (null maximum-word-length)
+                  (<= (length name) maximum-word-length))
+          (collect name into words)
+          (incf count))
+        (finally (return (values words count)))))

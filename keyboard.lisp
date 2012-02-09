@@ -29,12 +29,8 @@
 (defun quiz-typing (&optional maximum-word-length)
   "Simple quiz of typing Russian words."
   (format t "Type 'q' to exit.~%")
-  (let* ((words
-           (iter (for (name type) in (load-word-frequency-list))
-                 (if (or (null maximum-word-length)
-                         (<= (length name) maximum-word-length))
-                  (collect name))))
-         (length (length words)))
+  (multiple-value-bind (words length)
+      (list-frequency-words maximum-word-length)
     (iter
      (let ((word (nth (random length) words)))
        (format t "~A~&" word)
