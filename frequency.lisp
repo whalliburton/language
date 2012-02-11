@@ -47,3 +47,12 @@
           (collect name into words)
           (incf count))
         (finally (return (values words count)))))
+
+(defun show-frequency-word-lengths ()
+  (let ((acc (make-array 100 :initial-element 0)))
+    (iter (for (name type) in (load-word-frequency-list))
+          (incf (aref acc (length name))))
+    (print-table
+     (iter (for i from 0 to 99)
+           (when (plusp (aref acc i))
+             (collect (list i (aref acc i))))))))
