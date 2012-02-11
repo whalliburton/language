@@ -38,15 +38,16 @@
   (iter (for el in (frequency-wordlist-audio-mapping))
     (format t "~A ~20T ~7A~{ ~A~}~%" (first el) (second el) (mapcar #'car (cddr el)))))
 
-(defun list-frequency-words (&optional maximum-word-length)
+(defun list-frequency-words (&optional maximum-word-length strict-word-length)
   (iter
    (with count = 0)
    (for (name type) in (load-word-frequency-list))
-        (when (or (null maximum-word-length)
-                  (<= (length name) maximum-word-length))
-          (collect name into words)
-          (incf count))
-        (finally (return (values words count)))))
+   (when (or (null maximum-word-length)
+             (and (null strict-word-length) (<= (length name) maximum-word-length))
+             (= (length name) maximum-word-length))
+     (collect name into words)
+     (incf count))
+   (finally (return (values words count)))))
 
 (defun show-frequency-word-lengths ()
   (let ((acc (make-array 100 :initial-element 0)))

@@ -42,11 +42,11 @@
         (force-output)
         (format t "~A~%" (car (translate word :source "ru" :target "en")))))
 
-(defun quiz (&optional maximum-word-length)
+(defun quiz (&optional maximum-word-length strict-word-length)
   "Simple quiz of typing, understanding and pronouncing Russian words."
   (format t "Type 'q' to exit.~%")
   (multiple-value-bind (words length)
-      (list-frequency-words maximum-word-length)
+      (list-frequency-words maximum-word-length strict-word-length)
     (iter
      (let ((word (nth (random length) words)))
        (format t "~%• ~A~&" word)
