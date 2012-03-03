@@ -8,5 +8,5 @@
   (:import-from sb-ext run-program process-status octets-to-string string-to-octets)
   (:import-from flexi-streams with-output-to-sequence)
   (:import-from dict with-dict-client define)
-  (:export quiz-keys quiz-typing translate done))
+  (:export quiz-keys quiz-typing translate quiz done))
 
