@@ -40,7 +40,7 @@
                         (read stream)))
         (setf (gethash k *translation-cache*) v)))
 
-(defun translate (query &key (source "en") (target "ru"))
+(defun translate (query &key (source "ru") (target "en"))
   "Translate QUERY from one language to another."
   (or (gethash (list query source target) *translation-cache*)
       (setf (gethash (list query source target) *translation-cache*)
