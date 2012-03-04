@@ -12,10 +12,11 @@
     (setf *vocab*
           (with-input-from-file (stream filename)
             (iter (for line = (read-line stream nil))
-              (while (and line (plusp (length line))))
-              (destructuring-bind (native translation) (split-sequence #\| line)
-                (collect (cons (string-trim '(#\space) native)
-                               (string-trim '(#\space) translation)))))))
+              (while line)
+              (when (and (plusp (length line)) (not (char= (char line 0) #\#)))
+                (destructuring-bind (native translation) (split-sequence #\| line)
+                  (collect (cons (string-trim '(#\space) native)
+                                 (string-trim '(#\space) translation))))))))
     (load-vocab-audio)
     (print-vocab)))
 
