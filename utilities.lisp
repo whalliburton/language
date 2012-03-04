@@ -47,3 +47,15 @@
 (defun safe-read-from-string (string)
   (let ((*read-eval* nil))
     (read-from-string string)))
+
+(defun group (source n)
+  (when (zerop n) (error "zero length"))
+  (labels ((rec (source acc)
+             (let ((rest (nthcdr n source)))
+               (if (consp rest)
+                 (rec rest (cons
+                            (subseq source 0 n)
+                            acc))
+                 (nreverse
+                  (cons source acc))))))
+    (when source (rec source nil))))

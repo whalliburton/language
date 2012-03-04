@@ -18,4 +18,5 @@
                (:file "quiz")
                (:file "initialize"))
   :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora :cl-fad
-                       :flexi-streams :org-davep-dict))
+                       :flexi-streams :org-davep-dict
+                       :cl-typesetting))

@@ -1,11 +1,14 @@
 (in-package :language)
 
 (defparameter *vocab-directory* (concatenate 'string (base-path) "vocab/"))
+(defparameter *fonts-directory* (concatenate 'string (base-path) "fonts/"))
+(defparameter *flashcards-directory* (concatenate 'string (base-path) "flashcards/"))
 
 (defparameter *all-words*
   (list-shtooka-packet-words '("rus-balm-voc" "rus-balm-voc-sakhno" "rus-nonfree")))
 
 (defvar *vocab* nil)
+(defvar *vocab-filename* nil)
 
 (defun load-vocab (&optional (directory *vocab-directory*))
   (let ((filename (choose-file directory (lambda (el) (substitute #\space #\- el)))))
@@ -16,7 +19,8 @@
               (when (and (plusp (length line)) (not (char= (char line 0) #\#)))
                 (destructuring-bind (native translation) (split-sequence #\| line)
                   (collect (cons (string-trim '(#\space) native)
-                                 (string-trim '(#\space) translation))))))))
+                                 (string-trim '(#\space) translation)))))))
+          *vocab-filename* filename)
     (load-vocab-audio)
     (print-vocab)))
 
@@ -66,3 +70,55 @@
               ((string= input "q") (return))))
           (format t "~A~%~%" native)
           (when audio (play (random-nth audio))))))))
+
+(defconstant +points-per-inch+ 72)
+
+(defun load-vocab-font ()
+  (pdf:load-ttu-font (format nil "~Aterminus.ufm" *fonts-directory*)
+                     (format nil "~Aterminus.ttf" *fonts-directory*))
+  (pdf:get-font "TerminusMedium"))
+
+(defun generate-vocab-flashcards (&key (number-per-card 5)
+                                       (cards-per-row 3)
+                                       (cards-per-column 3)
+                                       (row-padding 20)
+                                       (column-padding 20))
+  (assert *vocab-filename*)
+  (ensure-directories-exist *flashcards-directory*)
+  (load-vocab-font)
+  (let ((filename (format nil "~A~A-flashcards.pdf" *flashcards-directory*
+                          (pathname-name *vocab-filename*)))
+        (width (* 2.4d0 +points-per-inch+))
+        (height (* 3.3d0 +points-per-inch+))
+        (cl-pdf:*default-page-bounds* cl-pdf:*letter-portrait-page-bounds*))
+    (labels ((draw-card (dx dy words back)
+               (let ((center-block
+                       (compile-text ()
+                         (paragraph
+                             (:h-align :center :font "TerminusMedium" :font-size 18)
+                           :vfill
+                           (iter
+                            (for word on words)
+                            (typeset::put-string (if back (cdar word) (caar word)))
+                            (when (cdr words) (typeset:vspace 20)))
+                           :vfill))))
+                 (pdf:translate dx dy)
+                 (typeset::draw-block center-block 0 height width height :v-align :fill :border 1)
+                 (pdf:translate (- dx) (- dy))))
+             (draw-page (rows &optional back)
+               (pdf:with-page ()
+                 (iter (for row in rows)
+                       (for ncol from 0)
+                       (iter (for card in (if back (reverse row) row))
+                             (for nrow from 0)
+                             (let ((dx (+ 5 (+ row-padding (* (+ width row-padding) nrow))))
+                                   (dy (+ column-padding (* (+ height column-padding) ncol))))
+                               (draw-card dx dy card back)))))))
+      (pdf:with-document ()
+        (let* ((cards (group *vocab* number-per-card))
+               (rows (group cards cards-per-row))
+               (pages (group rows cards-per-column)))
+          (iter (for page in pages)
+                (draw-page page)
+                (draw-page page t)))
+        (pdf:write-document filename)))))
