@@ -73,10 +73,21 @@
 
 (defconstant +points-per-inch+ 72)
 
-(defun load-vocab-font ()
-  (pdf:load-ttu-font (format nil "~Aterminus.ufm" *fonts-directory*)
-                     (format nil "~Aterminus.ttf" *fonts-directory*))
-  (pdf:get-font "TerminusMedium"))
+(defparameter *vocab-fonts*
+  `(("rosa-arion-normal" "ROSAArionWC")
+    ("liberation-sans-regular" "LiberationSans")))
+
+(defvar *front-vocab-font* nil)
+(defvar *back-vocab-font* nil)
+
+(defun load-vocab-fonts ()
+  (iter (for (file name) in *vocab-fonts*)
+        (pdf:load-ttu-font (format nil "~A~A.ufm" *fonts-directory* file)
+                           (format nil "~A~A.ttf" *fonts-directory* file))
+        (collect (pdf:get-font name))
+        (if (first-iteration-p)
+          (setf *front-vocab-font* name)
+          (setf *back-vocab-font* name))))
 
 (defun generate-vocab-flashcards (&key (number-per-card 5)
                                        (cards-per-row 3)
@@ -86,16 +97,20 @@
   (assert *vocab-filename*)
   (ensure-directories-exist *flashcards-directory*)
   (load-vocab-font)
-  (let ((filename (format nil "~A~A-flashcards.pdf" *flashcards-directory*
-                          (pathname-name *vocab-filename*)))
-        (width (* 2.4d0 +points-per-inch+))
-        (height (* 3.3d0 +points-per-inch+))
-        (cl-pdf:*default-page-bounds* cl-pdf:*letter-portrait-page-bounds*))
+  (let* ((set-name (pathname-name *vocab-filename*))
+         (filename (format nil "~A~A-flashcards.pdf" *flashcards-directory* set-name))
+         (width (* 2.4d0 +points-per-inch+))
+         (height (* 3.3d0 +points-per-inch+))
+         (cl-pdf:*default-page-bounds* cl-pdf:*letter-portrait-page-bounds*))
     (labels ((draw-card (dx dy words back)
                (let ((center-block
                        (compile-text ()
+                         (with-style (:font *back-vocab-font* :font-size 6)
+                           (unless back (typeset::put-string set-name)))
                          (paragraph
-                             (:h-align :center :font "TerminusMedium" :font-size 18)
+                             (:h-align :center
+                              :font (if back *back-vocab-font* *front-vocab-font*)
+                              :font-size 18)
                            :vfill
                            (iter
                             (for word on words)
