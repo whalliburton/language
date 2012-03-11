@@ -16,6 +16,8 @@
                (:file "festival")
                (:file "dictionary")
                (:file "quiz")
+               (:file "audio")
+               (:file "text-to-speech")
                (:file "initialize"))
   :depends-on (:drakma :cl-json :iterate :usocket :babel :anaphora :cl-fad
                        :flexi-streams :org-davep-dict

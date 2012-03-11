@@ -4,7 +4,8 @@
   (concatenate 'string (base-path) "cache/"))
 
 (defun cache-filename-from-url (url)
-  (concatenate 'string (cache-path) (substitute #\| #\/ url)))
+  (concatenate 'string (cache-path)
+               (substitute #\_ #\? (substitute #\| #\/ url))))
 
 (defun cached-http-request (url &key binary)
   (ensure-directories-exist (cache-path))
@@ -15,9 +16,8 @@
                                :element-type (if binary '(unsigned-byte 8) 'character))))
           (read-sequence seq stream)
           seq))
-      (let ((data (http-request url)))
+      (let ((data (http-request url :external-format-out :utf8 :user-agent :firefox)))
         (with-output-to-file (stream filename :element-type (if binary '(unsigned-byte 8) 'character))
           (write-sequence data stream))
         data))))
-
 

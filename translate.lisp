@@ -8,7 +8,7 @@
       (warn "No google key found at ~S." filename)
       (string-trim '(#\newline) (slurp-file filename)))))
 
-(defun url-encode (string)
+(defun local-url-encode (string)
   (with-output-to-string (stream)
     (iter (for char in-vector string)
           (if (alphanumericp char)
@@ -20,7 +20,7 @@
     (multiple-value-bind (data code)
         (http-request
          (format nil "https://www.googleapis.com/language/translate/v2~
-                    ?key=~A&source=~A&target=~A&q=~A" key source target (url-encode query)))
+                    ?key=~A&source=~A&target=~A&q=~A" key source target (local-url-encode query)))
       (when (eql code 200)
         (decode-json-from-string (sb-ext:octets-to-string data :external-format :utf-8))))))
 
