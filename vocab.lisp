@@ -96,7 +96,7 @@
                                        (column-padding 20))
   (assert *vocab-filename*)
   (ensure-directories-exist *flashcards-directory*)
-  (load-vocab-font)
+  (load-vocab-fonts)
   (let* ((set-name (pathname-name *vocab-filename*))
          (filename (format nil "~A~A-flashcards.pdf" *flashcards-directory* set-name))
          (width (* 2.4d0 +points-per-inch+))
